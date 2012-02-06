@@ -22,13 +22,17 @@ require_once 'PHPUnit/Framework/Assert/Functions.php';
  */
 class FeatureContext extends BehatContext //MinkContext if you want to test web
 {
-
 	/**
 	 * @Given /There is no "([^"]*)" in database/
 	 */
 	public function thereIsNoRecordInDatabase($entityName)
 	{
-		throw new \Behat\Behat\Exception\PendingException();
+	    $entities = $this->getEntityManager()->getRepository('AcmeDemoBundle:'.$entityName)->findAll();
+	    foreach ($entities as $eachEntity) {
+	        $this->getEntityManager()->remove($eachEntity);
+	    }
+
+	    $this->getEntityManager()->flush();
 	}
 
     /**
@@ -36,7 +40,11 @@ class FeatureContext extends BehatContext //MinkContext if you want to test web
      */
     public function iHaveACategory($name)
     {
-		throw new \Behat\Behat\Exception\PendingException();
+        $category = new \Acme\DemoBundle\Entity\Category();
+        $category->setName($name);
+
+        $this->getEntityManager()->persist($category);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -44,7 +52,11 @@ class FeatureContext extends BehatContext //MinkContext if you want to test web
      */
     public function iHaveAProduct($name)
     {
-		throw new \Behat\Behat\Exception\PendingException();
+        $product = new \Acme\DemoBundle\Entity\Product();
+        $product->setName($name);
+
+        $this->getEntityManager()->persist($product);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -52,8 +64,13 @@ class FeatureContext extends BehatContext //MinkContext if you want to test web
      */
     public function iAddProductToCategory($productName, $categoryName)
     {
-		throw new \Behat\Behat\Exception\PendingException();
+        $product = $this->getRepository('AcmeDemoBundle:Product')->findOneByName($productName);
+        $category = $this->getRepository('AcmeDemoBundle:Category')->findOneByName($categoryName);
 
+        $category->addProduct($product);
+
+        $this->getEntityManager()->persist($category);
+        $this->getEntityManager()->flush();
     }
 
     /**
@@ -61,7 +78,17 @@ class FeatureContext extends BehatContext //MinkContext if you want to test web
      */
     public function iShouldFindProductInCategory($productName, $categoryName)
     {
-		throw new \Behat\Behat\Exception\PendingException();
+        $category = $this->getRepository('AcmeDemoBundle:Category')->findOneByName($categoryName);
+
+        $found = false;
+        foreach ($category->getProducts() as $product) {
+            if ($productName === $product->getName()) {
+                $found = true;
+                break;
+            }
+        }
+
+        assertTrue($found);
     }
 
     /**
