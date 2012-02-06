@@ -18,7 +18,7 @@ Feature: Product Category Relationship
 	    And I have a product "Coca Cola"
 	    And I have a product "Solo"
 	   When I add product "Coca Cola" to category "Drinks"
-	    And I add product "Solo" to category "Drink"
+	    And I add product "Solo" to category "Drinks"
 	   Then I should find product "Coca Cola" in category "Drinks"
 	    And I should find product "Solo" in category "Drinks"
 	

@@ -1,0 +1,24 @@
+# Category.orm.yml
+Acme\DemoBundle\Entity\Category:
+    type: entity
+    table: categories
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    manyToMany:
+        products:
+            targetEntity: Product
+            joinTable:
+                name: products_categories
+                joinColumns:
+                    category_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    product_id:
+                        referencedColumnName: id
+    fields:
+        name:
+            type: string
+            length: 100
+            unique: true
